@@ -3,7 +3,6 @@
 
 import datetime
 from email.MIMENonMultipart import MIMENonMultipart
-from email.MIMEText import MIMEText
 import htmlentitydefs
 import urllib
 import re
@@ -26,7 +25,7 @@ enquote = wikitools.Wiki(enquote_base+'/w/api.php'); enquote.setMaxlag(-1)
 # Figure out the date
 date = datetime.date.today()
 year = date.year
-day = date.day+1
+day = date.day
 month = date.strftime('%B')
 
 # Empty list
