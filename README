@@ -6,8 +6,8 @@ Dependencies:
 ** BeautifulSoup module (<http://www.crummy.com/software/BeautifulSoup/>)
 ** wikitools module (<https://code.google.com/p/python-wikitools/>)
 
-Fill out "config.sample" appropriately and move the file to "config.py" in the
-same directory as "dal.py". Be sure to restrict read permissions on both
+Fill out "config.py.sample" appropriately and move the file to "config.py" in
+the same directory as "dal.py". Be sure to restrict read permissions on both
 "config.py" and the resulting "config.pyc" file.
 
 License information is available in the LICENSE file.
