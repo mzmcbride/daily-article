@@ -1,0 +1,8 @@
+# Settings for dal.py
+
+from_address = 'address@example.com'
+to_addresses = ['address@example.com']
+smtp_host = 'smtp.gmail.com'
+smtp_port = 587
+email_password = 'secret password here'
+notification_page = 'User talk:Username'
