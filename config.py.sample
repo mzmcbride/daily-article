@@ -6,3 +6,5 @@ smtp_host = 'smtp.gmail.com'
 smtp_port = 587
 email_password = 'secret password here'
 notification_page = 'User talk:Username'
+wiki_username = 'username'
+wiki_password = 'password'

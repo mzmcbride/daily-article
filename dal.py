@@ -15,6 +15,8 @@ import wikitools
 import config
 
 # Establish a few wikis
+metawiki_base = 'https://meta.wikimedia.org'
+metawiki = wikitools.Wiki(metawiki_base+'/w/api.php'); metawiki.setMaxlag(-1)
 enwiki_base = 'https://en.wikipedia.org'
 enwiki = wikitools.Wiki(enwiki_base+'/w/api.php'); enwiki.setMaxlag(-1)
 enwikt_base = 'https://en.wiktionary.org'
@@ -180,31 +182,47 @@ def wrap_text(text):
     wrapped_lines = textwrap.wrap(text, width=72)
     return '\n'.join(wrapped_lines)
 
-# Do some shit
-featured_article_title = make_featured_article_section(month, day, year)
-make_selected_anniversaries_section(month, day)
-make_wiktionary_section(month, day)
-make_wikiquote_section(month, day, year)
+def send_email(email_to, email_from, email_subject, email_body):
+    msg = MIMENonMultipart('text', 'plain')
+    msg['Content-Transfer-Encoding'] = '8bit'
+    msg.set_payload(email_body, 'utf-8')
+    msg['From'] = email_from
+    msg['Subject'] = email_subject
+    server = smtplib.SMTP(config.smtp_host, config.smtp_port)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login(email_from, config.email_password)
+    for addr in email_to:
+        msg['To'] = addr
+        body = msg.as_string()
+        server.sendmail(email_from, addr, body, '8bitmime')
+    server.quit()
 
-final_output = '\n'.join(final_sections)
+send = False
+try:
+    # Do some shit
+    featured_article_title = make_featured_article_section(month, day, year)
+    make_selected_anniversaries_section(month, day)
+    make_wiktionary_section(month, day)
+    make_wikiquote_section(month, day, year)
 
-# Okay now send an e-mail
-subject = '%s %d: %s' % (month, day, featured_article_title)
+    final_output = '\n'.join(final_sections)
+    subject = '%s %d: %s' % (month, day, featured_article_title)
+    send = True
 
-fromaddr = config.fromaddr
-toaddr = config.toaddr
-msg = MIMENonMultipart('text', 'plain')
-msg['Content-Transfer-Encoding'] = '8bit'
-msg.set_payload(final_output, 'utf-8')
-msg['From'] = fromaddr
-msg['Subject'] = subject
-server = smtplib.SMTP(config.smtphost, config.smtpport)
-server.ehlo()
-server.starttls()
-server.ehlo()
-server.login(config.fromaddr, config.emailpass)
-for addr in toaddr:
-    msg['To'] = addr
-    body = msg.as_string()
-    server.sendmail(fromaddr, addr, body, '8bitmime')
-server.quit()
+except:  # Unnamed!
+    # Inform the wiki of an issue!
+    date = '%s %s, %s' % (month, day, year)
+    talk_page = wikitools.Page(metawiki, config.notification_page)
+    metawiki.login(config.wiki_username, config.wiki_password)
+    talk_page.edit(text='Just thought you\'d like to know. --~~~~',
+                   summary='daily-article-l delivery failed (%s)' % date,
+                   section='new',
+                   bot=1)
+
+if send:
+    send_email(config.to_addresses,
+               config.from_address,
+               subject,
+               final_output)
