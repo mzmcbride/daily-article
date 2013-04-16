@@ -87,7 +87,12 @@ def make_featured_article_section(month, day, year):
     p_text = first_para.rsplit('. (', 1)[0]+'.'
     p_text = unescape(p_text)
     clean_p_text = strip_html(p_text)
-    more_html = first_para.rsplit('. (', 1)[1]
+    if first_para.find('. (') is not -1:
+        more_html = first_para.rsplit('. (', 1)[1]
+    elif first_para.find('." (') is not -1:
+        more_html = first_para.rsplit('." (', 1)[1]
+    else:
+        more_html = first_para
     more_soup = BeautifulSoup.BeautifulSoup(more_html)
     for a in more_soup.findAll('a'):
         read_more = ('%s' + '<%s%s>') % ('Read more: ',
