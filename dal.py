@@ -166,10 +166,12 @@ def make_wikiquote_section(month, day, year):
         if line.find('~') != -1:
             author_soup = BeautifulSoup.BeautifulSoup(line)
             for a in author_soup.findAll('a'):
+                if not a.string:
+                    continue
                 read_more = ('<%s%s>') % (enquote_base,
                                           a['href'].encode('utf-8'))
                 author = '  --'+a.string.encode('utf-8')
-        else:
+        elif line != u'in<br />':
             lines.append(unescape(line))
     authorless_lines = '\n'.join(lines)
     quote = strip_html(authorless_lines)
