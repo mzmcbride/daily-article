@@ -87,7 +87,11 @@ def make_featured_article_section(month, day, year):
     p_text = first_para.rsplit('. (', 1)[0]+'.'
     p_text = unescape(p_text)
     clean_p_text = strip_html(p_text)
-    if first_para.find('. (') is not -1:
+    if (first_para.find('. (') is not -1 and
+        first_para[:100].find('._(') is not -1):
+        more_html = first_para.rsplit('. (', 2)
+        more_html = '. ('.join([more_html[1], more_html[2]])
+    elif first_para.find('. (') is not -1:
         more_html = first_para.rsplit('. (', 1)[1]
     elif first_para.find('." (') is not -1:
         more_html = first_para.rsplit('." (', 1)[1]
