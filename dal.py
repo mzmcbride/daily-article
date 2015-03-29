@@ -117,6 +117,8 @@ def make_selected_anniversaries_section(month, day):
     for line in parsed_wikitext.split('\n'):
         if line.startswith('<li'):
             line = line.replace(' <i>(pictured)</i> ', ' ')
+            line = line.replace(' <i>(pictured)</i>, ', ', ')
+            line = re.sub(r'<span class="nowrap">(.+?)</span>', r'\1', line)
             plaintext_lines = wrap_text(strip_html(unescape(line)))
             formatted_plaintext_lines = ':\n\n'.join(plaintext_lines.split(' \xe2\x80\x93 ', 1))
             line_soup = BeautifulSoup.BeautifulSoup(line)
