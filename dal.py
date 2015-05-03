@@ -8,6 +8,7 @@ import urllib
 import re
 import smtplib
 import textwrap
+import traceback
 
 import BeautifulSoup
 import wikitools
@@ -229,7 +230,12 @@ except:  # Unnamed!
     date = '%s %s, %s' % (month, day, year)
     talk_page = wikitools.Page(metawiki, config.notification_page)
     metawiki.login(config.wiki_username, config.wiki_password)
-    talk_page.edit(text='Just thought you\'d like to know. --~~~~',
+    text = '\n'.join(("Just thought you'd like to know:",
+                      "<pre>",
+                      traceback.format_exc().rstrip(),
+                      "</pre>",
+                      "Love, --~~~~"))
+    talk_page.edit(text=text,
                    summary='daily-article-l delivery failed (%s)' % date,
                    section='new',
                    bot=1)
