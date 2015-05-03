@@ -230,9 +230,10 @@ except:  # Unnamed!
     date = '%s %s, %s' % (month, day, year)
     talk_page = wikitools.Page(metawiki, config.notification_page)
     metawiki.login(config.wiki_username, config.wiki_password)
+    tb = traceback.format_exc().rstrip().replace(config.wiki_password, 'XXX')
     text = '\n'.join(("Just thought you'd like to know:",
                       "<pre>",
-                      traceback.format_exc().rstrip(),
+                      tb,
                       "</pre>",
                       "Love, --~~~~"))
     talk_page.edit(text=text,
