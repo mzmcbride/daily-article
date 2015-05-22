@@ -116,7 +116,7 @@ def make_selected_anniversaries_section(month, day):
     parsed_wikitext = parse_wikitext(enwiki, '{{'+page_title+'}}')
     anniversaries = []
     for line in parsed_wikitext.split('\n'):
-        if line.startswith('<li'):
+        if line.startswith('<li') and line.find(u'\u2013') != -1:
             line = line.replace(' <i>(pictured)</i> ', ' ')
             line = line.replace(' <i>(pictured)</i>, ', ', ')
             line = re.sub(r'<span class="nowrap">(.+?)</span>', r'\1', line)
