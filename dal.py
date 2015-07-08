@@ -3,6 +3,7 @@
 
 import datetime
 from email.MIMENonMultipart import MIMENonMultipart
+from email.header import Header
 import htmlentitydefs
 import urllib
 import re
@@ -201,7 +202,7 @@ def send_email(email_to, email_from, email_subject, email_body):
     msg['Content-Transfer-Encoding'] = '8bit'
     msg.set_payload(email_body, 'utf-8')
     msg['From'] = email_from
-    msg['Subject'] = email_subject
+    msg['Subject'] = Header(email_subject, 'utf-8')
     server = smtplib.SMTP(config.smtp_host, config.smtp_port)
     server.ehlo()
     server.starttls()
