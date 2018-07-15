@@ -147,7 +147,7 @@ def make_wiktionary_section(month, day):
     if parsed_wikitext.count('<li') > 1:
         count = 1
     for line in parsed_wikitext.split('\n'):
-        if line.startswith('<li'):
+        if line.startswith('<li') or line.startswith('<ol><li'):
             clean_line = strip_html(line)
             if count:
                 count_text = str(count)+'. '
