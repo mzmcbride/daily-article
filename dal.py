@@ -142,19 +142,18 @@ def make_wiktionary_section(month, day):
     parsed_wikitext = parse_wikitext(enwikt, '{{'+page_title+'}}')
     soup = BeautifulSoup.BeautifulSoup(parsed_wikitext)
     word = soup.find('span', id='WOTD-rss-title').string.encode('utf-8')
+
+    definitions_stripped = []
+    for li in soup.findAll('li'):
+        definitions_stripped.append(strip_html(li.renderContents()))
     definitions = []
-    count = False
-    if parsed_wikitext.count('<li') > 1:
-        count = 1
-    for line in parsed_wikitext.split('\n'):
-        if line.startswith('<li') or line.startswith('<ol><li'):
-            clean_line = strip_html(line)
-            if count:
-                count_text = str(count)+'. '
-                count += 1
-            else:
-                count_text = ''
-            definitions.append(count_text+wrap_text(clean_line))
+    if len(definitions_stripped) > 1:
+        for i, t in enumerate(definitions_stripped):
+            definitions.append(str(i + 1) + '. ' + t)
+    else:
+        definitions = definitions_stripped
+    definitions = map(wrap_text, definitions)
+
     header = '_____________________________\n'
     header += 'Wiktionary\'s word of the day:\n'
     read_more = '<'+enwikt_base+'/wiki/'+urllib.quote(word.replace(' ', '_'))+'>'
