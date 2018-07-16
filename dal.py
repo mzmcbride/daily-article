@@ -103,7 +103,7 @@ def make_featured_article_section(month, day, year):
     for a in more_soup.findAll('a'):
         read_more = ('%s' + '<%s%s>') % ('Read more: ',
                                          enwiki_base,
-                                         a['href'].encode('utf-8'))
+                                         a['href'].encode('utf-8').replace('(', '%28').replace(')', '%29'))
         featured_article_title = a['title'].encode('utf-8')
     featured_article_section = '\n'.join([wrap_text(clean_p_text),
                                           '',
@@ -127,7 +127,7 @@ def make_selected_anniversaries_section(month, day):
             for b in line_soup.findAll('b'):
                 for a in b.contents:
                     read_more = ('<%s%s>') % (enwiki_base,
-                                              a['href'].encode('utf-8'))
+                                              a['href'].encode('utf-8').replace('(', '%28').replace(')', '%29'))
             complete_item = formatted_plaintext_lines+'\n'+read_more+'\n'
             anniversaries.append(complete_item)
     header = '_______________________________\n'
@@ -177,7 +177,7 @@ def make_wikiquote_section(month, day, year):
                 if not a.string:
                     continue
                 read_more = ('<%s%s>') % (enquote_base,
-                                          a['href'].encode('utf-8'))
+                                          a['href'].encode('utf-8').replace('(', '%28').replace(')', '%29'))
                 author = '  --'+a.string.encode('utf-8')
         elif line != u'in<br />':
             lines.append(unescape(line))
