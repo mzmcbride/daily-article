@@ -80,6 +80,9 @@ def make_featured_article_section(month, day, year):
     except wikitools.page.NoPage:
         return False
     parsed_wikitext = parse_wikitext(enwiki, wikitext)
+    wrapper_div = u'<div class="mw-parser-output">'
+    if parsed_wikitext.startswith(wrapper_div):
+        parsed_wikitext = parsed_wikitext.replace(wrapper_div, '')
     # Grab the first <p> tag and pray
     found = False
     for line in parsed_wikitext.split('\n'):
@@ -125,6 +128,10 @@ def make_selected_anniversaries_section(month, day):
             formatted_plaintext_lines = ':\n\n'.join(plaintext_lines.split(' \xe2\x80\x93 ', 1))
             line_soup = BeautifulSoup.BeautifulSoup(line)
             for b in line_soup.findAll('b'):
+                if (len(b.contents) == 3 and
+                    (b.contents[0] == b.contents[2] == u'"')):
+                    b.contents.pop()
+                    b.contents.pop(0)
                 for a in b.contents:
                     read_more = ('<%s%s>') % (enwiki_base,
                                               a['href'].encode('utf-8').replace('(', '%28').replace(')', '%29'))
