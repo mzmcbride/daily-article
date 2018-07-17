@@ -152,7 +152,7 @@ def make_wiktionary_section(month, day):
 
     definitions_stripped = []
     for li in soup.findAll('li'):
-        definitions_stripped.append(unescape(strip_html(li.renderContents()).decode('utf-8')))
+        definitions_stripped.append(unescape(strip_html(li.renderContents())))
     definitions = []
     if len(definitions_stripped) > 1:
         for i, t in enumerate(definitions_stripped):
