@@ -169,7 +169,7 @@ def make_wiktionary_section(month, day):
                                     '\n'.join(definitions),
                                     read_more,
                                     ''])
-    final_sections.append(wiktionary_section)
+    final_sections.append(wiktionary_section.encode('utf-8'))
     return
 
 def make_wikiquote_section(month, day, year):
