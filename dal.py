@@ -8,6 +8,7 @@ import htmlentitydefs
 import urllib
 import re
 import smtplib
+import sys
 import textwrap
 import traceback
 
@@ -15,6 +16,10 @@ import BeautifulSoup
 import wikitools
 
 import config
+
+DEBUG_MODE = False
+if sys.argv[-1] == '--debug':
+    DEBUG_MODE = True
 
 # Establish a few wikis
 metawiki_base = 'https://meta.wikimedia.org'
@@ -31,6 +36,8 @@ date = datetime.date.today()
 year = date.year
 day = date.day
 month = date.strftime('%B')
+if DEBUG_MODE:
+    print(month, day, year)
 
 # Empty list
 final_sections = []
@@ -169,6 +176,8 @@ def make_wiktionary_section(month, day):
                                     '\n'.join(definitions),
                                     read_more,
                                     ''])
+    if DEBUG_MODE:
+        print(repr(wiktionary_section))
     final_sections.append(wiktionary_section.encode('utf-8'))
     return
 
@@ -224,31 +233,38 @@ send = False
 try:
     # Do some shit
     featured_article_title = make_featured_article_section(month, day, year)
+    subject = '%s %d: %s' % (month, day, featured_article_title)
     make_selected_anniversaries_section(month, day)
     make_wiktionary_section(month, day)
     make_wikiquote_section(month, day, year)
 
     final_output = '\n'.join(final_sections)
-    subject = '%s %d: %s' % (month, day, featured_article_title)
     send = True
 
 except:  # Unnamed!
     # Inform the wiki of an issue!
     date = '%s %s, %s' % (month, day, year)
-    talk_page = wikitools.Page(metawiki, config.notification_page)
-    metawiki.login(config.wiki_username, config.wiki_password)
     tb = traceback.format_exc().rstrip().replace(config.wiki_password, 'XXX')
-    text = '\n'.join(("Just thought you'd like to know:",
-                      "<pre>",
-                      tb,
-                      "</pre>",
-                      "Love, --~~~~"))
-    talk_page.edit(text=text,
-                   summary='daily-article-l delivery failed (%s)' % date,
-                   section='new',
-                   bot=1)
+    if DEBUG_MODE:
+        print(tb)
+        sys.exit(1)
+    else:
+        talk_page = wikitools.Page(metawiki, config.notification_page)
+        metawiki.login(config.wiki_username, config.wiki_password)
+        text = '\n'.join(("Just thought you'd like to know:",
+                          "<pre>",
+                          tb,
+                          "</pre>",
+                          "Love, --~~~~"))
+        talk_page.edit(text=text,
+                       summary='daily-article-l delivery failed (%s)' % date,
+                       section='new',
+                       bot=1)
 
-if send:
+if DEBUG_MODE:
+    print(subject + '\n')
+    print('\n'.join(final_sections))
+elif send:
     send_email(config.to_addresses,
                config.from_address,
                subject,
