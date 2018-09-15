@@ -43,7 +43,7 @@ if DEBUG_MODE:
 final_sections = []
 
 def strip_html(original_text):
-    soup = BeautifulSoup.BeautifulSoup(original_text)
+    soup = BeautifulSoup.BeautifulSoup(original_text, fromEncoding='utf-8')
     new_text = ''.join(soup.findAll(text=True)).encode('utf-8')
     return new_text
 
@@ -161,14 +161,8 @@ def make_wiktionary_section(month, day):
 
     definitions_stripped = []
     for li in soup.findAll('li'):
-        # FIXME: August 10, 2018 is cursed; the {{...}} template is breaking
-        # the world :-(
-        try:
-            def_ = unescape(strip_html(li.renderContents()))
-        except UnicodeDecodeError:
-            def_ = None
-        if def_:
-            definitions_stripped.append(def_)
+        def_ = unescape(strip_html(li.renderContents()).decode('utf-8'))
+        definitions_stripped.append(def_)
     definitions = []
     if len(definitions_stripped) > 1:
         for i, t in enumerate(definitions_stripped):
