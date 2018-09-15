@@ -153,19 +153,30 @@ def make_selected_anniversaries_section(month, day):
 
 def make_wiktionary_section(month, day):
     page_title = 'Wiktionary:Word of the day/%s %s' % (month, day)
+    if DEBUG_MODE:
+        print(enwikt_base + '/wiki/' + page_title.replace(' ', '_'))
     parsed_wikitext = parse_wikitext(enwikt, '{{'+page_title+'}}')
     soup = BeautifulSoup.BeautifulSoup(parsed_wikitext)
     word = soup.find('span', id='WOTD-rss-title').string.encode('utf-8')
 
     definitions_stripped = []
     for li in soup.findAll('li'):
-        definitions_stripped.append(unescape(strip_html(li.renderContents())))
+        # FIXME: August 10, 2018 is cursed; the {{...}} template is breaking
+        # the world :-(
+        try:
+            def_ = unescape(strip_html(li.renderContents()))
+        except UnicodeDecodeError:
+            def_ = None
+        if def_:
+            definitions_stripped.append(def_)
     definitions = []
     if len(definitions_stripped) > 1:
         for i, t in enumerate(definitions_stripped):
             definitions.append(str(i + 1) + '. ' + t)
-    else:
+    elif len(definitions_stripped) == 1:
         definitions = definitions_stripped
+    if not definitions:
+        return
     definitions = map(wrap_text, definitions)
 
     header = '_____________________________\n'
