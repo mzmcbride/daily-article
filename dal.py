@@ -156,12 +156,19 @@ def make_wiktionary_section(month, day):
     if DEBUG_MODE:
         print(enwikt_base + '/wiki/' + page_title.replace(' ', '_'))
     parsed_wikitext = parse_wikitext(enwikt, '{{'+page_title+'}}')
-    soup = BeautifulSoup.BeautifulSoup(parsed_wikitext)
+    soup = BeautifulSoup.BeautifulSoup(parsed_wikitext, fromEncoding='utf-8')
     word = soup.find('span', id='WOTD-rss-title').string.encode('utf-8')
 
     definitions_stripped = []
     for li in soup.findAll('li'):
-        def_ = unescape(strip_html(li.renderContents()).decode('utf-8'))
+        li_contents = li.renderContents()
+        nested_soup = BeautifulSoup.BeautifulSoup(li_contents, fromEncoding='utf-8')
+        # Remove nested li elements, by removing any nested ol elements,
+        # since the li elements will be processed later separately
+        for ol in nested_soup.findAll('ol'):
+            ol.decompose()
+        li_contents = nested_soup.renderContents()
+        def_ = unescape(strip_html(li_contents).decode('utf-8')).strip()
         definitions_stripped.append(def_)
     definitions = []
     if len(definitions_stripped) > 1:
