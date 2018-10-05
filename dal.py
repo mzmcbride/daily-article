@@ -139,6 +139,9 @@ def make_selected_anniversaries_section(month, day):
                     (b.contents[0] == b.contents[2] == u'"')):
                     b.contents.pop()
                     b.contents.pop(0)
+                if (len(b.contents) == 2 and
+                    b.contents[1] == u"'"):
+                    b.contents.pop()
                 for a in b.contents:
                     read_more = ('<%s%s>') % (enwiki_base,
                                               a['href'].encode('utf-8').replace('(', '%28').replace(')', '%29'))
