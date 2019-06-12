@@ -32,7 +32,7 @@ enquote_base = 'https://en.wikiquote.org'
 enquote = wikitools.Wiki(enquote_base+'/w/api.php'); enquote.setMaxlag(-1)
 
 # Figure out the date
-date = datetime.date.today()
+date = datetime.datetime.utcnow()
 year = date.year
 day = date.day
 month = date.strftime('%B')
