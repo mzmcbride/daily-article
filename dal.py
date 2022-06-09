@@ -154,8 +154,8 @@ def make_selected_anniversaries_section(month, day):
     final_sections.append(selected_anniversaries_section)
     return
 
-def make_wiktionary_section(month, day):
-    page_title = 'Wiktionary:Word of the day/%s %s' % (month, day)
+def make_wiktionary_section(month, day, year):
+    page_title = 'Wiktionary:Word of the day/%s/%s %s' % (year, month, day)
     if DEBUG_MODE:
         print(enwikt_base + '/wiki/' + page_title.replace(' ', '_'))
     parsed_wikitext = parse_wikitext(enwikt, '{{'+page_title+'}}')
@@ -250,7 +250,7 @@ try:
     featured_article_title = make_featured_article_section(month, day, year)
     subject = '%s %d: %s' % (month, day, featured_article_title)
     make_selected_anniversaries_section(month, day)
-    make_wiktionary_section(month, day)
+    make_wiktionary_section(month, day, year)
     make_wikiquote_section(month, day, year)
 
     final_output = '\n'.join(final_sections)
